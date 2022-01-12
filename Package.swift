@@ -5,6 +5,9 @@ import PackageDescription
 
 let package = Package(
   name: "AplPi",
+  platforms: [
+     .macOS(.v10_15)
+  ],
   products: [
     // Products define the executables and libraries a package produces, and make them visible to other packages.
     .library(
@@ -13,7 +16,10 @@ let package = Package(
     )
   ],
   dependencies: [
-    .package(url: "https://github.com/shibapm/Komondor", from: "1.1.2"), // dev
+    .package(url: "https://github.com/vapor/vapor.git", from: "4.0.0"),
+    .package(url: "https://github.com/vapor/fluent.git", from: "4.0.0"),
+    .package(url: "https://github.com/vapor/fluent-postgres-driver.git", from: "2.0.0"),
+    .package(url: "https://github.com/shibapm/Komondor", from: "1.1.3"), // dev
     .package(url: "https://github.com/nicklockwood/SwiftFormat", from: "0.47.0"), // dev
     .package(url: "https://github.com/realm/SwiftLint", from: "0.43.0"), // dev
     .package(url: "https://github.com/brightdigit/swift-test-codecov", from: "1.0.0"), // dev
@@ -24,11 +30,25 @@ let package = Package(
     // Targets can depend on other targets in this package, and on products in packages this package depends on.
     .target(
       name: "AplPi",
-      dependencies: []
+      dependencies: [                
+        .product(name: "Fluent", package: "fluent"),
+        .product(name: "FluentPostgresDriver", package: "fluent-postgres-driver"),
+        .product(name: "Vapor", package: "vapor")
+      ],
+      swiftSettings: [
+          // Enable better optimizations when building in Release configuration. Despite the use of
+          // the `.unsafeFlags` construct required by SwiftPM, this flag is recommended for Release
+          // builds. See <https://github.com/swift-server/guides/blob/main/docs/building.md#building-for-production> for details.
+          .unsafeFlags(["-cross-module-optimization"], .when(configuration: .release))
+      ]
     ),
+    .executableTarget(name: "Run", dependencies: [.target(name: "AplPi")]),
     .testTarget(
       name: "AplPiTests",
-      dependencies: ["AplPi"]
+      dependencies: [
+      "AplPi",
+      .product(name: "XCTVapor", package: "vapor")
+      ]
     )
   ]
 )
