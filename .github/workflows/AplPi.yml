@@ -54,10 +54,6 @@ jobs:
         include:
           - runs-on: macos-11
             xcode: "/Applications/Xcode_13.2.1.app"
-          - runs-on: macos-11
-            xcode: "/Applications/Xcode_13.1.app"
-          - runs-on: macos-11
-            xcode: "/Applications/Xcode_13.0.app"
     steps:
       - uses: actions/checkout@v2
       - name: Set Xcode Name
