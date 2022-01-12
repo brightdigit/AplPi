@@ -1,4 +1,4 @@
-@testable import AplPi
+@testable import AplPiKit
 import XCTest
 
 final class AplPiTests: XCTestCase {
