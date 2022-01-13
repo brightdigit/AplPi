@@ -9,15 +9,21 @@ FROM ubuntu:focal as build
 RUN export DEBIAN_FRONTEND=noninteractive DEBCONF_NONINTERACTIVE_SEEN=true \
     && apt-get -q update \
     && apt-get -q dist-upgrade -y \
-    && apt-get install binutils git gnupg2 libc6-dev libcurl4 libedit2 libgcc-9-dev libpython2.7 libsqlite3-0 libstdc++-9-dev libxml2 libz3-dev pkg-config tzdata uuid-dev zlib1g-dev -y \
-    &&  curl -O https://download.swift.org/swift-5.5.2-release/ubuntu2004/swift-5.5.2-RELEASE/swift-5.5.2-RELEASE-ubuntu20.04.tar.gz \
+    && apt-get install binutils git gnupg2 libc6-dev libcurl4 libedit2 libgcc-9-dev libpython2.7 libsqlite3-0 libstdc++-9-dev libxml2 libz3-dev pkg-config tzdata uuid-dev zlib1g-dev curl -y \
+    && curl -O https://download.swift.org/swift-5.5.2-release/ubuntu2004/swift-5.5.2-RELEASE/swift-5.5.2-RELEASE-ubuntu20.04.tar.gz \
     && rm -rf /var/lib/apt/lists/*
     
 
 
-RUN tar xzf swift-5.5.2-RELEASE-ubuntu20.04.tar.gz
+RUN tar xzf swift-5.5.2-RELEASE-ubuntu20.04.tar.gz --directory / --strip-components=1
 
-ENV PATH="swift-5.5.2-RELEASE-ubuntu20.04/usr/bin:${PATH}"
+##ENV PATH="$(pwd)/swift-5.5.2-RELEASE-ubuntu20.04/usr/bin:${PATH}"
+
+##RUN ls swift-5.5.2-RELEASE-ubuntu20.04/usr/bin
+
+#RUN echo $PATH
+
+RUN chmod -R o+r /usr/lib/swift
 #RUN apt-get install swiftlang -y
 
 # Set up a build area
