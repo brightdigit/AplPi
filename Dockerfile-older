@@ -1,24 +1,13 @@
 # ================================
 # Build image
 # ================================
-FROM ubuntu:focal as build
-
-
+FROM futurejones/swiftlang as build
 
 # Install OS updates and, if needed, sqlite3
 RUN export DEBIAN_FRONTEND=noninteractive DEBCONF_NONINTERACTIVE_SEEN=true \
     && apt-get -q update \
     && apt-get -q dist-upgrade -y \
-    && apt-get install binutils git gnupg2 libc6-dev libcurl4 libedit2 libgcc-9-dev libpython2.7 libsqlite3-0 libstdc++-9-dev libxml2 libz3-dev pkg-config tzdata uuid-dev zlib1g-dev -y \
-    &&  curl -O https://download.swift.org/swift-5.5.2-release/ubuntu2004/swift-5.5.2-RELEASE/swift-5.5.2-RELEASE-ubuntu20.04.tar.gz \
     && rm -rf /var/lib/apt/lists/*
-    
-
-
-RUN tar xzf swift-5.5.2-RELEASE-ubuntu20.04.tar.gz
-
-ENV PATH="swift-5.5.2-RELEASE-ubuntu20.04/usr/bin:${PATH}"
-#RUN apt-get install swiftlang -y
 
 # Set up a build area
 WORKDIR /build

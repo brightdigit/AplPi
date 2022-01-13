@@ -1,12 +1,8 @@
 name: AplPi
 on:
   push:
-    branches:
-      - '*'
-      - 'feature/*'
-      - 'release/*'
-      - 'bugfix/*'
-    tags: '*'
+    branches-ignore:
+      - '*WIP'
 jobs:
   build-ubuntu:
     name: Build on Ubuntu
