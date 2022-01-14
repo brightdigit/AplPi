@@ -7,25 +7,8 @@ FROM ubuntu:focal as build
 RUN export DEBIAN_FRONTEND=noninteractive DEBCONF_NONINTERACTIVE_SEEN=true \
     && apt-get -q update \
     && apt-get -q dist-upgrade -y \    
-    && apt-get install -y \
-     curl \
-     binutils \
-     git \
-     gnupg2 \
-     libc6-dev \
-     libcurl4 \
-     libedit2 \
-     libgcc-9-dev \
-     libpython2.7 \
-     libsqlite3-0 \
-     libstdc++-9-dev \
-     libxml2 \
-     libz3-dev \
-     pkg-config \
-     tzdata \
-     uuid-dev \
-     zlib1g-dev \
-    && curl -s https://gist.githubusercontent.com/leogdion/b0f23e25ce933b9f6f5cd1bc8922a3ed/raw/13f9f385a686829fde7c4f74708b4d9c7293faf9/swift-apt-repo-install.sh | bash \
+    && apt-get install curl -y \
+    && curl -s https://gist.githubusercontent.com/leogdion/b0f23e25ce933b9f6f5cd1bc8922a3ed/raw/3d3c63924c4c61971d673eb0f8757db2c824094c/swift-apt-repo-install.sh | bash \
     && apt-get install swiftlang -y \
     && rm -rf /var/lib/apt/lists/*
 
@@ -37,13 +20,14 @@ WORKDIR /build
 # as long as your Package.swift/Package.resolved
 # files do not change.
 COPY ./Package.* ./
+
 RUN swift package resolve
 
 # Copy entire repo into container
 COPY . .
 
 # Build everything, with optimizations
-RUN swift build -c release
+RUN swift build -c release -Xswiftc -static-stdlib 
 
 # Switch to the staging area
 WORKDIR /staging

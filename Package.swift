@@ -1,4 +1,4 @@
-// swift-tools-version:5.5
+// swift-tools-version:5.4
 // The swift-tools-version declares the minimum version of Swift required to build this package.
 
 import PackageDescription
@@ -20,7 +20,7 @@ let package = Package(
     .package(url: "https://github.com/vapor/vapor.git", from: "4.0.0"),
     .package(url: "https://github.com/vapor/fluent.git", from: "4.0.0"),
     .package(url: "https://github.com/vapor/fluent-postgres-driver.git", from: "2.0.0"),
-    .package(url: "https://github.com/johnsundell/plot.git", from: "0.9.0"),
+    .package(name: "Plot", url: "https://github.com/johnsundell/plot.git", from: "0.9.0"),
     .package(url: "https://github.com/shibapm/Komondor", from: "1.1.3"), // dev
      .package(url: "https://github.com/nicklockwood/SwiftFormat", from: "0.47.0"), // dev
      .package(url: "https://github.com/realm/SwiftLint", from: "0.43.0"), // dev
@@ -36,7 +36,7 @@ let package = Package(
         .product(name: "Fluent", package: "fluent"),
         .product(name: "FluentPostgresDriver", package: "fluent-postgres-driver"),
         .product(name: "Vapor", package: "vapor"),
-        .product(name: "Plot", package: "plot")
+        .product(name: "Plot", package: "Plot")
       ],
       swiftSettings: [
         // Enable better optimizations when building in Release configuration. Despite the use of
