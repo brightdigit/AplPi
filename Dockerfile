@@ -1,14 +1,18 @@
 # Ubuntu Focal 20.04
 # Swift 5.5.2 Release
 FROM ubuntu:20.04
-LABEL maintainer="Swift on Arm <docker@swift-arm.com>"
-LABEL description="Docker Container for the Swift programming language"
 
+RUN ARCH= && dpkgArch="$(dpkg --print-architecture)" \
+  && case "${dpkgArch##*-}" in \
+    amd64) ARCH='amd64';; \
+    arm64) ARCH='arm64';; \
+    *) echo "unsupported architecture"; exit 1 ;; \
+  esac \
 RUN export DEBIAN_FRONTEND=noninteractive DEBCONF_NONINTERACTIVE_SEEN=true && apt-get -q update && \
     apt-get -q install -y \
     wget
 
-ARG PACKAGE_NAME=swiftlang_5.5.2-01-ubuntu-focal_arm64.deb
+ARG PACKAGE_NAME=swiftlang_5.5.2-01-ubuntu-focal_$ARCH.deb
 ARG RELEASE_TAG=v5.5.2-RELEASE
 ARG SWIFT_WEBROOT=https://archive.swiftlang.xyz/repos/ubuntu/pool/main/s/swiftlang
 
