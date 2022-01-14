@@ -1,37 +1,70 @@
-# Ubuntu Focal 20.04
-# Swift 5.5.2 Release
-FROM ubuntu:20.04
+# ================================
+# Build image
+# ================================
+FROM ubuntu:focal as build
 
-#ENV ARCH=`uname -m`
 
-RUN export DEBIAN_FRONTEND=noninteractive DEBCONF_NONINTERACTIVE_SEEN=true && apt-get -q update && \
-    apt-get -q install -y \
-    wget
 
-#ARG PACKAGE_NAME=swiftlang_5.5.2-01-ubuntu-focal_$ARCH.deb
-ARG RELEASE_TAG=v5.5.2-RELEASE
-ARG SWIFT_WEBROOT=https://archive.swiftlang.xyz/repos/ubuntu/pool/main/s/swiftlang
+# Install OS updates and, if needed, sqlite3
+RUN export DEBIAN_FRONTEND=noninteractive DEBCONF_NONINTERACTIVE_SEEN=true \
+    && apt-get -q update \
+    && apt-get -q dist-upgrade -y \    
+    && apt-get install curl -y \
+    && curl -s https://gist.githubusercontent.com/leogdion/b0f23e25ce933b9f6f5cd1bc8922a3ed/raw/13f9f385a686829fde7c4f74708b4d9c7293faf9/swift-apt-repo-install.sh | bash \
+    && apt-get install swiftlang -y \
+    && rm -rf /var/lib/apt/lists/*
 
-RUN echo `dpkg --print-architecture`
+# Set up a build area
+WORKDIR /build
 
-RUN set -e; \
-   ARCH= && dpkgArch="$(dpkg --print-architecture)" \
-    && case "${dpkgArch##*-}" in \
-      amd64) ARCH='amd64';; \
-      arm64) ARCH='arm64';; \
-      aarch64) ARCH='arm64';; \
-      *) echo "unsupported architecture"; exit 1 ;; \
-    esac \
-    SWIFT_BIN_URL="$SWIFT_WEBROOT/swiftlang_5.5.2-01-ubuntu-focal_$ARCH.deb" \
-    # - download the swift toolchain
-    && wget "$SWIFT_BIN_URL" \
-    # - install swift
-    && export DEBIAN_FRONTEND=noninteractive \
-    && apt-get -q install -y ./"$PACKAGE_NAME" \
-    # - clean up.
-    && rm -rf "$PACKAGE_NAME" \
-    && apt-get purge --auto-remove -y wget \
-    && rm -r /var/lib/apt/lists/*
+# First just resolve dependencies.
+# This creates a cached layer that can be reused
+# as long as your Package.swift/Package.resolved
+# files do not change.
+COPY ./Package.* ./
+RUN swift package resolve
 
-# Print Installed Swift Version
-RUN swift --version
+# Copy entire repo into container
+COPY . .
+
+# Build everything, with optimizations
+RUN swift build -c release
+
+# Switch to the staging area
+WORKDIR /staging
+
+# Copy main executable to staging area
+RUN cp "$(swift build --package-path /build -c release --show-bin-path)/aplpid" ./
+
+# Copy any resouces from the public directory and views directory if the directories exist
+# Ensure that by default, neither the directory nor any of its contents are writable.
+RUN [ -d /build/Public ] && { mv /build/Public ./Public && chmod -R a-w ./Public; } || true
+RUN [ -d /build/Resources ] && { mv /build/Resources ./Resources && chmod -R a-w ./Resources; } || true
+
+# ================================
+# Run image
+# ================================
+FROM ubuntu:focal 
+
+# Make sure all system packages are up to date.
+RUN export DEBIAN_FRONTEND=noninteractive DEBCONF_NONINTERACTIVE_SEEN=true && \
+    apt-get -q update && apt-get -q dist-upgrade -y && rm -r /var/lib/apt/lists/*
+
+# Create a vapor user and group with /app as its home directory
+RUN useradd --user-group --create-home --system --skel /dev/null --home-dir /app vapor
+
+# Switch to the new home directory
+WORKDIR /app
+
+# Copy built executable and any staged resources from builder
+COPY --from=build --chown=vapor:vapor /staging /app
+
+# Ensure all further commands run as the vapor user
+USER vapor:vapor
+
+# Let Docker bind to port 8080
+EXPOSE 8080
+
+# Start the Vapor service when the image is run, default to listening on 8080 in production environment
+ENTRYPOINT ["./aplpid"]
+CMD ["serve", "--env", "production", "--hostname", "0.0.0.0", "--port", "8080"]
