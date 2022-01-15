@@ -1,15 +1,13 @@
 # ================================
 # Build image
 # ================================
-FROM ubuntu:focal as build
+FROM swiftarm/swift:5.5.2-jammy-multi-arch as build
+
 
 # Install OS updates and, if needed, sqlite3
 RUN export DEBIAN_FRONTEND=noninteractive DEBCONF_NONINTERACTIVE_SEEN=true \
     && apt-get -q update \
     && apt-get -q dist-upgrade -y \    
-    && apt-get install curl -y \
-    && curl -s https://gist.githubusercontent.com/leogdion/b0f23e25ce933b9f6f5cd1bc8922a3ed/raw/3d3c63924c4c61971d673eb0f8757db2c824094c/swift-apt-repo-install.sh | bash \
-    && apt-get install swiftlang -y \
     && rm -rf /var/lib/apt/lists/*
 
 # Set up a build area
@@ -43,7 +41,7 @@ RUN [ -d /build/Resources ] && { mv /build/Resources ./Resources && chmod -R a-w
 # ================================
 # Run image
 # ================================
-FROM ubuntu:focal 
+FROM swiftarm/swift:5.5.2-jammy-multi-arch
 
 # Make sure all system packages are up to date.
 RUN export DEBIAN_FRONTEND=noninteractive DEBCONF_NONINTERACTIVE_SEEN=true && \
