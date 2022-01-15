@@ -46,9 +46,6 @@ xcuserdata/
 build/
 DerivedData/
 *.moved-aside
-=======
-# Xcode
->>>>>>> sdk
 *.pbxuser
 !default.pbxuser
 *.mode1v3
@@ -57,7 +54,6 @@ DerivedData/
 !default.mode2v3
 *.perspectivev3
 !default.perspectivev3
-<<<<<<< HEAD
 
 ## Obj-C/Swift specific
 *.hmap
@@ -76,7 +72,7 @@ playground.xcworkspace
 # Packages/
 # Package.pins
 Package.resolved
-*.xcodeproj
+# *.xcodeproj
 # Xcode automatically generates this directory with a .xcworkspacedata file and xcuserdata
 # hence it is not needed unless you have added a package configuration file to your project
 .swiftpm
@@ -141,6 +137,5 @@ xcuserdata
 !*.xcworkspace/contents.xcworkspacedata
 **/xcshareddata/WorkspaceSettings.xcsettings
 
-# End of https://www.toptal.com/developers/gitignore/api/macos,swift,SwiftPackageManager,Xcode
-
 *.pxd/QuickLook
+# End of https://www.toptal.com/developers/gitignore/api/xcode,macos,swift,swiftpackagemanager
