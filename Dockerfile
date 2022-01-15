@@ -1,14 +1,17 @@
 # ================================
 # Build image
 # ================================
-FROM ubuntu:focal as build
+FROM ubuntu:jammy as build
 
 # Install OS updates and, if needed, sqlite3
-RUN export DEBIAN_FRONTEND=noninteractive DEBCONF_NONINTERACTIVE_SEEN=true \
+RUN export DEBIAN_FRONTEND=noninteractive DEBCONF_NONINTERACTIVE_SEEN=true arch=`{ case $(uname -m) in "aarch64") echo "arm64";; "amd64") echo "amd64";; "arm64") echo "arm64s";; *) echo "nop";; esac; }` \
+    && echo $arch \
     && apt-get -q update \
     && apt-get -q dist-upgrade -y \    
     && apt-get install curl -y \
-    && curl -s https://gist.githubusercontent.com/leogdion/b0f23e25ce933b9f6f5cd1bc8922a3ed/raw/3d3c63924c4c61971d673eb0f8757db2c824094c/swift-apt-repo-install.sh | bash \
+    && curl -O https://archive.swiftlang.xyz/repos/ubuntu/pool/v5_4/s/swiftlang/swiftlang_5.4.3-01-ubuntu-hirsute_$arch.deb \
+    && apt-get install ./swiftlang_5.4.3-01-ubuntu-hirsute_$arch.deb -y \
+    # && curl -s https://gist.githubusercontent.com/leogdion/b0f23e25ce933b9f6f5cd1bc8922a3ed/raw/3d3c63924c4c61971d673eb0f8757db2c824094c/swift-apt-repo-install.sh | bash \
     && apt-get install swiftlang -y \
     && rm -rf /var/lib/apt/lists/*
 
@@ -43,7 +46,7 @@ RUN [ -d /build/Resources ] && { mv /build/Resources ./Resources && chmod -R a-w
 # ================================
 # Run image
 # ================================
-FROM ubuntu:focal 
+FROM ubuntu:jammy 
 
 # Make sure all system packages are up to date.
 RUN export DEBIAN_FRONTEND=noninteractive DEBCONF_NONINTERACTIVE_SEEN=true && \
