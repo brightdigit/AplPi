@@ -8,7 +8,7 @@ RUN export DEBIAN_FRONTEND=noninteractive DEBCONF_NONINTERACTIVE_SEEN=true \
     && apt-get -q update \
     && apt-get -q dist-upgrade -y \    
     && apt-get install curl -y \
-    && curl -s https://gist.githubusercontent.com/leogdion/b0f23e25ce933b9f6f5cd1bc8922a3ed/raw/079e67a99c88db454ec7d096bfc957fc31c30ddd/swift-apt-repo-install.sh | bash \
+    && curl -s https://gist.githubusercontent.com/leogdion/b0f23e25ce933b9f6f5cd1bc8922a3ed/raw/3d3c63924c4c61971d673eb0f8757db2c824094c/swift-apt-repo-install.sh | bash \
     && apt-get install swiftlang -y \
     && rm -rf /var/lib/apt/lists/*
 
