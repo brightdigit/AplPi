@@ -3,8 +3,14 @@
 @tailwind utilities;
 
 body {
-	@apply bg-black font-sans text-gray-200;
+	@apply bg-black font-sans text-gray-200 font-extralight;
+	header {
+		@apply m-8 h-20;
+		.logo {
+			@apply h-16 inline my-auto mr-4 align-middle;
+		}
+	}
 	h1 {
-		@apply text-xl;
+		@apply text-5xl inline my-auto  align-middle;
 	}
 }
