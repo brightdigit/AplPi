@@ -4,4 +4,7 @@
 
 body {
 	@apply bg-black font-sans text-gray-200;
+	h1 {
+		@apply text-xl;
+	}
 }

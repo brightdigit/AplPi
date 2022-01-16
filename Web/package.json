@@ -1,5 +1,26 @@
 {
-  "devDependencies": {
-    "tailwindcss": "^3.0.15"
+  "scripts": {
+    "start": "npm run watch dev & live-server ../Public --no-browser",
+    "watch": "npm-watch",
+    "dev": "postcss src/styles.css -o ../Public/css/styles.css"
+  },
+  "dependencies": {
+    "autoprefixer": "^10.4.2",
+    "postcss": "^8.4.5",
+    "postcss-cli": "^8.3.1",
+    "postcss-import": "^14.0.0",
+    "tailwindcss": "^3.0.15",    
+    "@compodoc/live-server": "^1.2.2",
+    "npm-watch": "^0.7.0"
+  },
+  "watch": {
+    "dev": {
+      "patterns" : [
+      "../Public/**/*.*",
+      "src/styles.css",
+      "tailwind.config.js"
+      ],
+      "ignore" : "../Public/css/styles.css"
+    }
   }
 }
