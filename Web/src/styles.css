@@ -4,7 +4,7 @@
 
 body {
 	@apply bg-black font-sans text-gray-200 font-extralight;
-	header {
+	& > header {
 		@apply m-8 h-20;
 		.logo {
 			@apply h-16 inline my-auto mr-4 align-middle;
@@ -12,5 +12,20 @@ body {
 	}
 	h1 {
 		@apply text-5xl inline my-auto  align-middle;
+	}
+	h2 {
+		@apply text-3xl;
+	}
+	
+	& > main {
+		@apply m-8;
+		& > section {
+			
+			& > main {
+				& > .data {
+					
+				}
+			}
+		}
 	}
 }
