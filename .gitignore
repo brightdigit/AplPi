@@ -139,3 +139,4 @@ xcuserdata
 
 *.pxd/QuickLook
 # End of https://www.toptal.com/developers/gitignore/api/xcode,macos,swift,swiftpackagemanager
+Public/css
